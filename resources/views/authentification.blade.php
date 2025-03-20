@@ -15,7 +15,8 @@
         <div class="login-form">
             <div class="form-card">
                 <h2>Connexion</h2>
-                <form action="{{ route('authentification.submit') }}" method="GET">
+                <form action="{{ route('authentification.submit') }}" method="POST">
+                    @csrf
                     <!-- Ajoutez les conteneurs d'erreur -->
                     <div class="form-group">
                         <label>Email UGB</label>

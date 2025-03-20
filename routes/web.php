@@ -26,7 +26,7 @@ Route::post('/inscription', [ElectionController::class, 'register'])->name('insc
 
 Route::get('/pageAuth', [ElectionController::class, 'afficherPageAuth']) -> name('pageAuth');
 
-Route::get('/authentification', [ElectionController::class, 'login'])->name('authentification.submit');
+Route::post('/authentification', [ElectionController::class, 'login'])->name('authentification.submit');
 // deconnexion
 Route::get('/deconnexion', [ElectionController::class, 'logout']) -> name('deconnexion.submit');
 
@@ -34,7 +34,7 @@ Route::get('/deconnexion', [ElectionController::class, 'logout']) -> name('decon
 // page de connexion pour l'admin
 Route::get('/pageAuthAdmin', [AdminController::class, 'afficherPageAuthAdmin']) -> name('pageAuthAdmin');
 
-Route::get('/authentificationadmin', [AdminController::class, 'login'])->name('authentificationadmin.submit');
+Route::post('/authentificationadmin', [AdminController::class, 'login'])->name('authentificationadmin.submit');
 
 
 Route::middleware(['admin'::class])->group(function () {
