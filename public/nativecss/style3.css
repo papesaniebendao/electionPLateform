@@ -1,0 +1,83 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    flex: 1; /* Permet d'occuper l'espace disponible */
+}
+
+.hero-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 80vh;
+    background-color: white;
+    padding: 50px 20px;
+}
+.hero-text {
+    max-width: 600px;
+}
+.hero-text h1 {
+    color: #3f51b5;
+    font-weight: bold;
+}
+.hero-image img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Style pour le lien FALOU */
+.navbar-brand {
+    font-family: ''Arial', sans-serif' !important; 
+    font-size: 2rem !important; 
+    color: #3f51b5 !important; 
+    text-transform: uppercase !important; 
+    font-weight: 700 !important; 
+}
+
+/* Styles Navbar */
+.navbar-nav .nav-link {
+    color: #3f51b5; /* Bleu Bootstrap */
+    transition: all 0.3s ease;
+}
+.navbar-nav .nav-link:hover {
+    text-decoration: underline; /* Ajoute un soulignement */
+    color: #3f51b5 !important; /* Garde la même couleur */
+}
+
+.modal-body p {
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.modal-body p:last-child {
+    border-bottom: none;
+}
+
+
+/* Styles Footer */
+.footer {
+    background: #3f51b5;
+    color: white;
+    text-align: center;
+    padding: 20px 10px;
+    margin-top: 30px;
+    position: relative;
+    width: 100%;
+}
+.footer a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    margin: 0 10px;
+}
+.footer a:hover {
+    text-decoration: underline;
+}

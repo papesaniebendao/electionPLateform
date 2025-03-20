@@ -1,0 +1,144 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Conteneur principal */
+.login-container {
+    display: flex;
+    min-height: 100vh;
+    background: #f8f9fa;
+}
+
+/* Colonne image */
+.login-image {
+    flex: 1;
+    background: url('../assets/acceuil.jpg') center/cover;
+    display: none;
+}
+
+/* Colonne formulaire */
+.login-form {
+    flex: 1;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+/* Carte formulaire */
+.form-card {
+    width: 100%;
+    max-width: 400px;
+    background: white;
+    padding: 2.5rem;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* Titre */
+h2 {
+    color: #3f51b5;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+/* Styles des champs */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #3f51b5;
+    font-weight: 500;
+}
+
+input {
+    width: 100%;
+    padding: 0.8rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+input:focus {
+    border-color: #3498db;
+    outline: none;
+}
+
+/* Bouton */
+button {
+    width: 100%;
+    padding: 1rem;
+    background: #3f51b5;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background: #2980b9;
+}
+
+/* Liens */
+.form-links {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    text-align: center;
+}
+
+a {
+    color: #3f51b5;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+
+/* Style des messages d'erreur */
+.error-message {
+    color: #dc3545;
+    font-size: 0.8rem;
+    margin-top: 0.3rem;
+    min-height: 1.2rem;
+}
+
+.error-border {
+    border-color: #dc3545 !important;
+}
+
+.global-error {
+    background: #dc3545;
+    color: white;
+    padding: 0.8rem;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+}
+
+/* Responsive */
+@media (min-width: 768px) {
+    .login-image {
+        display: block;
+    }
+    
+    .login-form {
+        padding: 4rem;
+    }
+}
