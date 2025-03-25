@@ -46,10 +46,10 @@
         }
         .candidate-name {
             font-weight: bold;
-            color: #3f51b5;
+            color: #345afb;
         }
         .vote-button {
-            background-color: #3f51b5;
+            background-color: #345afb;
             color: white;
             border: none;
             padding: 5px 15px;
@@ -57,7 +57,7 @@
             cursor: pointer;
         }
         .vote-button:hover {
-            background-color: #3f51b5;
+            background-color: #345afb;
         }
         
         /* Style de la bannière flottante */
@@ -288,7 +288,7 @@
                 $("#departement-btn, #conseil-btn").css({ "background-color": "", "color": "" }).addClass("btn-light");
 
                 // Appliquer la couleur uniquement au bouton sélectionné
-                $(this).removeClass("btn-light").css({ "background-color": "#3f51b5", "color": "white" });
+                $(this).removeClass("btn-light").css({ "background-color": "#345afb", "color": "white" });
 
                 // Récupérer la catégorie sélectionnée et charger les candidats dynamiquement
                 const category = $(this).attr('id') === 'departement-btn' ? 'departement' : 'conseil';

@@ -37,7 +37,7 @@
 }
 
 h2 {
-    color: #3f51b5;
+    color: #345afb;
     margin-bottom: 1.5rem;
     text-align: center;
     font-size: 1.5rem;
@@ -50,7 +50,7 @@ h2 {
 label {
     display: block;
     margin-bottom: 0.3rem;
-    color: #3f51b5;
+    color: #345afb;
     font-size: 0.9rem;
     font-weight: 500;
 }
@@ -79,7 +79,7 @@ select {
 button {
     width: 100%;
     padding: 0.8rem;
-    background: #3f51b5;
+    background: #345afb;
     color: white;
     border: none;
     border-radius: 8px;
@@ -117,7 +117,7 @@ button:hover {
 }
 
 a {
-    color: #3f51b5;
+    color: #345afb;
     text-decoration: none;
 }
 

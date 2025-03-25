@@ -42,7 +42,7 @@
 }
 
 .election-table thead tr {
-    background-color: #3f51b5;
+    background-color: #345afb;
     color: #ffffff;
     text-align: left;
 }
@@ -63,7 +63,7 @@
 }
 
 .election-table tbody tr:last-of-type {
-    border-bottom: 2px solid #3f51b5;
+    border-bottom: 2px solid #345afb;
 }
 
 .election-table tbody tr:hover {
@@ -93,7 +93,7 @@
 
 .vote-count {
     font-weight: bold;
-    color: #3f51b5;
+    color: #345afb;
     text-align: center;
 }
 </style>

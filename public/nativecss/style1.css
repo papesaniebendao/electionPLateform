@@ -41,7 +41,7 @@
 
 /* Titre */
 h2 {
-    color: #3f51b5;
+    color: #345afb;
     margin-bottom: 2rem;
     text-align: center;
 }
@@ -54,7 +54,7 @@ h2 {
 label {
     display: block;
     margin-bottom: 0.5rem;
-    color: #3f51b5;
+    color: #345afb;
     font-weight: 500;
 }
 
@@ -76,7 +76,7 @@ input:focus {
 button {
     width: 100%;
     padding: 1rem;
-    background: #3f51b5;
+    background: #345afb;
     color: white;
     border: none;
     border-radius: 8px;
@@ -99,7 +99,7 @@ button:hover {
 }
 
 a {
-    color: #3f51b5;
+    color: #345afb;
     text-decoration: none;
     font-size: 0.9rem;
 }

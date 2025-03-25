@@ -25,7 +25,7 @@ html, body {
     max-width: 600px;
 }
 .hero-text h1 {
-    color: #3f51b5;
+    color: #345afb;
     font-weight: bold;
 }
 .hero-image img {
@@ -36,23 +36,23 @@ html, body {
 .navbar-brand {
     font-family: ''Arial', sans-serif' !important; 
     font-size: 2rem !important; 
-    color: #3f51b5 !important; 
+    color: #345afb !important; 
     text-transform: uppercase !important; 
     font-weight: 700 !important; 
 }
 
 .navbar-brand:hover {
-    color: #3f51b5; /* Couleur bleue plus foncée lors du survol */
+    color: #345afb; /* Couleur bleue plus foncée lors du survol */
 }
 
 /* Styles Navbar */
 .navbar-nav .nav-link {
-    color: #3f51b5; /* Bleu Bootstrap */
+    color: #345afb; /* Bleu Bootstrap */
     transition: all 0.3s ease;
 }
 .navbar-nav .nav-link:hover {
     text-decoration: underline; /* Ajoute un soulignement */
-    color: #3f51b5 !important; /* Garde la même couleur */
+    color: #345afb !important; /* Garde la même couleur */
 }
 
 
@@ -70,7 +70,7 @@ html, body {
 .contact-icon {
     width: 40px;
     height: 40px;
-    background: #3f51b5;
+    background: #345afb;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -91,7 +91,7 @@ html, body {
 
 .social-link {
     font-size: 1.5rem;
-    color: #3f51b5;
+    color: #345afb;
     transition: transform 0.3s;
 }
 
@@ -112,7 +112,7 @@ html, body {
 
 /* Styles Footer */
 .footer {
-    background: #3f51b5;
+    background: #345afb;
     color: white;
     text-align: center;
     padding: 20px 10px;

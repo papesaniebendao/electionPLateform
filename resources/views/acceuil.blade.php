@@ -34,10 +34,10 @@
 
     <section class="hero-section container d-flex flex-column flex-lg-row">
         <div class="hero-text text-center text-lg-start">
-            <span style = "background: #3f51b5;" class="badge  mb-3">Votez pour votre choix</span>
+            <span style = "background: #345afb;" class="badge  mb-3">Votez pour votre choix</span>
             <h1>Participez à l'élection et faites entendre votre voix</h1>
             <p>Votre opinion compte ! Prenez part à ce vote et contribuez à façonner l'avenir.</p>
-            <a href = "{{ route('pageIns')}}" style = "background: #3f51b5; color: white;" class="btn" >S'inscrire</a>
+            <a href = "{{ route('pageIns')}}" style = "background: #345afb; color: white;" class="btn" >S'inscrire</a>
         </div>
         <div class="hero-image mt-4 mt-lg-0">
             <img src="{{ asset('assets/acceuil.jpg') }}" alt="Illustration élections">
