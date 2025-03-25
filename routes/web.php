@@ -37,8 +37,26 @@ Route::get('/pageAuthAdmin', [AdminController::class, 'afficherPageAuthAdmin']) 
 Route::post('/authentificationadmin', [AdminController::class, 'login'])->name('authentificationadmin.submit');
 
 
-Route::middleware(['admin'::class])->group(function () {
+// Routes admin
+Route::middleware(['admin'])->group(function () {
     Route::get('/pageAcceuilAdmin', [AdminController::class, 'afficherPageAcceuilAdmin'])->name('pageAcceuilAdmin');
+    Route::get('/gestion-utilisateurs', [AdminController::class, 'gestionUtilisateurs'])->name('gestion.utilisateurs');
+    Route::post('/filtrer-utilisateurs', [AdminController::class, 'filtrerUtilisateurs'])->name('filtrer.utilisateurs');
+    Route::post('/valider-modifications', [AdminController::class, 'validerModifications'])->name('valider.modifications');
+    
+    // Gestion des listes
+    Route::get('/gestion-listes', [AdminController::class, 'gestionListes'])->name('gestion.listes');
+    Route::get('/liste/create', [AdminController::class, 'createListe'])->name('liste.create');
+    Route::post('/liste/store', [AdminController::class, 'storeListe'])->name('liste.store');
+    Route::get('/liste/edit/{id}', [AdminController::class, 'editListe'])->name('liste.edit');
+    Route::put('/liste/update/{id}', [AdminController::class, 'updateListe'])->name('liste.update');
+    Route::delete('/liste/destroy/{id}', [AdminController::class, 'destroyListe'])->name('liste.destroy');
+    
+    // Consultation des votes
+    Route::get('/consulter-votes', [AdminController::class, 'consulterVotes'])->name('consulter.votes');
+    Route::get('/votes/departement', [AdminController::class, 'getVotesByDepartement'])->name('votes.departement');
+    Route::get('/votes/conseil', [AdminController::class, 'getVotesForConseil'])->name('votes.conseil');
+    Route::get('/votes/statistiques', [AdminController::class, 'getVotingStatistics'])->name('votes.statistiques');
 });
 
 
@@ -54,5 +72,3 @@ Route::middleware([EmpêcheConnexion::class])->group(function () {
     Route::post('/vote', [ElectionController::class, 'enregistrerVote'])->name('vote.submit');
 
 });
-
-

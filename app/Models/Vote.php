@@ -12,7 +12,7 @@ class Vote extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'candidat_id', 'created_at'
+        'user_id', 'candidat_id', 'poste', 'created_at'
     ];
 
     // Un vote appartient à un utilisateur

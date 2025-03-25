@@ -1,0 +1,315 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-color: white;
+    font-family: Arial, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.container-fluid {
+    flex: 1;
+    padding: 0;
+}
+
+/* Sidebar */
+.sidebar {
+    background-color: whitesmoke;
+    padding: 20px;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    min-height: 100vh;
+}
+
+#liste_menu {
+    list-style-type: none;
+    padding: 0;
+    margin: 30px 0 0 0;
+}
+
+#liste_menu li {
+    margin-bottom: 5px;
+}
+
+#liste_menu li a {
+    color: #333;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+#liste_menu li a:hover {
+    background-color: #f0f0f0;
+    color: #345afb;
+}
+
+#liste_menu li img {
+    width: 24px;
+    height: 24px;
+}
+
+#liste_menu li.active a {
+    color: #345afb;
+    font-weight: bold;
+}
+
+#liste_menu li.active a img {
+    filter: brightness(0) saturate(100%) invert(30%) sepia(100%) saturate(2000%) hue-rotate(220deg) brightness(90%) contrast(90%);
+}
+
+/* Header dans le contenu */
+#head {
+    background-color: white;
+    border-bottom: 1px solid #eee;
+    padding: 0 15px;
+    z-index: 900;
+}
+
+h2, h5 {
+    color: #345afb;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* Contenu principal */
+#contenu {
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin: 15px;
+}
+
+/* Style de la bulle de l'admin */
+.admin-bubble {
+    display: inline-block;
+    background-color: #345afb;
+    color: white;
+    border-radius: 50px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.admin-bubble:hover {
+    background-color: #2a4acb;
+}
+
+/* Table Styles */
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.my-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.my-table th, .my-table td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.my-table th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+}
+
+.my-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Style de l'image dans la colonne Photo */
+.my-table td img {
+    width: 24px;
+    height: 24px;
+    display: block;
+    margin: auto;
+}
+
+/* Style de l'interrupteur */
+.switch-container {
+    display: flex;
+    justify-content: center;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #345afb;
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+/* Style des boutons de filtre */
+.tous, .actifs, .desactives, .modifier {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.tous {
+    background-color: #345afb;
+    color: white;
+}
+
+.actifs {
+    background-color: #28a745;
+    color: white;
+}
+
+.desactives {
+    background-color: #dc3545;
+    color: white;
+}
+
+.modifier {
+    background-color: #ffc107;
+    color: black;
+}
+
+footer {
+    background-color: #345afb;
+    color: white;
+    padding: 0.75rem 1rem;
+    text-align: center;
+    font-size: 0.9rem;
+    margin-top: auto;
+}
+
+/* Styles responsive pour sidebar */
+#sidebarToggle {
+    background-color: transparent;
+    border: none;
+}
+
+#sidebarToggle .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%280, 0, 0, 0.5%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    width: 24px;
+    height: 24px;
+}
+
+#closeSidebar {
+    display: none;
+    font-size: 24px;
+    line-height: 1;
+}
+
+/* Media queries pour les différentes tailles d'écran */
+@media (max-width: 991px) {
+    .sidebar {
+        position: fixed;
+        left: -280px;
+        top: 0;
+        z-index: 1051;
+        width: 250px;
+        height: 100vh;
+        overflow-y: auto;
+        transition: left 0.3s ease;
+    }
+    
+    .sidebar-visible {
+        left: 0;
+    }
+    
+    #closeSidebar {
+        display: block;
+    }
+    
+    .content {
+        width: 100%;
+    }
+    
+    #head {
+        background-color: white;
+    }
+}
+
+@media (max-width: 768px) {
+    .tous, .actifs, .desactives, .modifier {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+    
+    .admin-bubble {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+    
+    h5 {
+        font-size: 16px;
+    }
+    
+    #contenu {
+        padding: 15px;
+        margin: 10px;
+    }
+}
+
+@media (max-width: 576px) {
+    #contenu {
+        padding: 10px;
+        margin: 5px;
+    }
+    
+    .my-table th, .my-table td {
+        padding: 8px 4px;
+        font-size: 12px;
+    }
+    
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+}

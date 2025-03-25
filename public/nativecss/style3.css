@@ -1,5 +1,6 @@
 body {
     font-family: Arial, sans-serif;
+    background-color: white;
 }
 
 html, body {
@@ -35,7 +36,7 @@ html, body {
 
 /* Style pour le lien FALOU */
 .navbar-brand {
-    font-family: ''Arial', sans-serif' !important; 
+    font-family: 'Playfair Display', serif !important; 
     font-size: 2rem !important; 
     color: #3f51b5 !important; 
     text-transform: uppercase !important; 
@@ -59,6 +60,50 @@ html, body {
 
 .modal-body p:last-child {
     border-bottom: none;
+}
+
+
+/* Style ccontacts */
+.contact-icon {
+    width: 40px;
+    height: 40px;
+    background: #3f51b5;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-shrink: 0;
+}
+
+.contact-card {
+    padding: 1rem;
+    border-radius: 10px;
+    transition: background 0.3s;
+}
+
+.contact-card:hover {
+    background: #f8f9fa;
+}
+
+.social-link {
+    font-size: 1.5rem;
+    color: #3f51b5;
+    transition: transform 0.3s;
+}
+
+.social-link:hover {
+    color: #2d3436;
+    transform: translateY(-2px);
+}
+
+.modal-header-profile {
+    border-bottom: 2px solid rgba(255,255,255,0.1);
+}
+
+.modal-content {
+    border-radius: 15px;
+    overflow: hidden;
 }
 
 

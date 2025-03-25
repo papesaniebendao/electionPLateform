@@ -3,6 +3,8 @@
         <tr>
             <th>CANDIDATS</th>
             <th>LISTE ÉLECTORALE</th>
+            <th>Departement</th>
+            <th>Niveau</th>
             <th>NOMBRE DE VOIX</th>
         </tr>
     </thead>
@@ -11,14 +13,17 @@
             <tr>
                 <td class="candidate-cell">
                     <div class="candidate-profile">
-                        <img src="{{ asset('assets/icone.jpg') }}" alt="Candidat" class="candidate-avatar">
+                        <img src="{{ $candidat->user->photo ? asset('storage/' . $candidat->user->photo) : asset('assets/icone.jpg') }}" 
+                            alt="Candidat" class="candidate-avatar">
                         <div class="candidate-info">
                             <div class="candidate-name">{{ $candidat->user->prenom }} {{ $candidat->user->nom }}</div>
                         </div>
                     </div>
                 </td>
                 <td>{{ $candidat->list->nom_liste }}</td>
-                <td class="vote-count">{{ $candidat->count_votes }}</td>
+                <td>{{ $candidat->user->departement }}</td>
+                <td>{{ $candidat->user->niveau }}</td>
+                <td class="vote-count" >{{ $candidat->count_votes }}</td>
             </tr>
         @endforeach
     </tbody>

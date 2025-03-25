@@ -63,6 +63,7 @@ class electionController extends Controller
         return response()->view('partials.candidates', compact('candidats'));
     }
 
+    /*
     public function enregistrerVote(Request $request)
     {
         $user = Auth::user(); // Récupère l'utilisateur connecté
@@ -99,6 +100,109 @@ class electionController extends Controller
             'votes_count' => $candidat->votes_count // Retourne le nombre de votes mis à jour
         ]);
     }
+*/
+
+    public function enregistrerVote(Request $request)
+    {
+        try{ 
+            $user = Auth::user(); 
+            $candidat_id = $request->input('candidat_id'); 
+
+            // 🔍 Récupère le candidat avec sa liste
+            $candidat = Candidat::with('list')->where('id', $candidat_id)->first();
+            if (!$candidat) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Candidat introuvable.'
+                ], 404, ['Content-Type' => 'application/json; charset=UTF-8'], JSON_UNESCAPED_UNICODE);
+            }
+
+            // 🔍 Récupère le candidat depuis la table users pour connaître son niveau et département
+            $candidat_user = User::where('code_etudiant', $candidat->code_etudiant)->first();
+            if (!$candidat_user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Le candidat n\'est pas valide.'
+                ], 404, ['Content-Type' => 'application/json; charset=UTF-8'], JSON_UNESCAPED_UNICODE);
+            }
+
+            // Poste basé sur le niveau et le département du candidat
+            $poste = "{$candidat_user->niveau}-{$candidat_user->departement}";
+            
+
+            // Filtrer selon le type de candidat
+            if ($candidat->type_candidat === 'departement') {
+                // L'utilisateur ne peut voter qu'une seule fois pour un candidat de type niveau-département
+                $existingVote = Vote::where('user_id', $user->id)
+                    ->where('poste', $poste)
+                    ->exists();
+
+                if ($existingVote) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => "Vous avez déjà voté pour un candidat dans $poste."
+                    ], 409, ['Content-Type' => 'application/json; charset=UTF-8'], JSON_UNESCAPED_UNICODE);
+
+                }
+            }
+
+            if ($candidat->type_candidat === 'conseil') {
+                // L'utilisateur peut voter une fois pour Licence et une fois pour Master
+                $niveau = $candidat_user->niveau; // "Licence" ou "Master"
+                $poste = $candidat_user->niveau;
+
+                $existingVote = Vote::where('user_id', $user->id)
+                    ->where('poste', $poste)
+                    ->exists();
+
+                if ($existingVote) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => "Vous avez déjà voté pour un délégué de $niveau dans le Conseil."
+                    ], 409, ['Content-Type' => 'application/json; charset=UTF-8'], JSON_UNESCAPED_UNICODE);
+                }
+            }
+
+            // ✅ Enregistre le vote dans la table `votes`
+            Vote::create([
+                'user_id' => $user->id,
+                'candidat_id' => $candidat_id,
+                'poste' => $poste
+            ]);
+
+            // Met à jour le nombre de votes du candidat
+            $candidat->votes_count = $candidat->votes_count + 1;
+            $candidat->save();
+
+            // Marque l'utilisateur comme ayant voté
+            $user->is_voted = true;
+            $user->save();
+
+
+            return response()->json([
+                'success' => true,
+                'message' => "Votre vote pour $candidat_user->prenom $candidat_user->nom au poste de $poste a été enregistré avec succès !",
+                'votes_count' => $candidat->votes_count,
+                'poste' => $poste,
+                'candidat' => [
+                    'nom' => $candidat->nom,
+                    'prenom' => $candidat->prenom,
+                    'niveau' => $candidat->niveau,
+                    'departement' => $candidat->departement,
+                    'poste' => $poste,
+                ]
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Une erreur est survenue : ' . $e->getMessage()
+            ], 500, ['Content-Type' => 'application/json; charset=UTF-8'], JSON_UNESCAPED_UNICODE);
+        }
+    }
+
+
+
 
     public function afficherPageAcceuilSimpleResultats(){
         return view('acceuilsimpleutilisateurresultatvotes');
@@ -106,16 +210,27 @@ class electionController extends Controller
     
     public function chargerResultats(Request $request)
     {
+
         $category = $request->get('category');
-        
-        // Logic pour récupérer les candidats selon la catégorie
-        $candidats = Candidat::where('type_candidat', $category)
-            ->with('user', 'list') // On récupère les relations avec user et liste
-            ->get();
     
-        // Retourner une vue avec les candidats
+
+        $candidats = Candidat::where('type_candidat', $category)
+            ->with('user', 'list') // Charger les relations User et List
+            ->get();
+
+        $departementOrder = ['Informatique', 'Mathématiques', 'Physique'];
+    
+
+        $candidats = $candidats->sortBy(function ($candidat) use ($departementOrder) {
+            return array_search($candidat->user->departement, $departementOrder); // Classement par département
+        })->sortBy(function ($candidat) {
+            return $candidat->user->niveau === 'Master' ? 1 : 0; 
+        })->sortByDesc('votes_count'); // Trier par votes décroissants
+
         return response()->view('partials.resultats', compact('candidats'));
     }
+    
+    
 
 
     // Gère l'inscription   
@@ -132,6 +247,7 @@ class electionController extends Controller
                 'niveau' => 'required|in:Licence,Master',
                 'email' => 'required|string|email|max:255|unique:users,email',
                 'password' => 'required|string|min:8|confirmed',
+                'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             ]);
         } catch (ValidationException $e) {
             Log::error('Erreurs de validation', ['errors' => $e->errors()]);
@@ -139,6 +255,11 @@ class electionController extends Controller
         }
     
         Log::info('Validation réussie');
+        
+        $photoPath = null;
+        if ($request->hasFile('photo')) {
+            $photoPath = $request->file('photo')->store('photos', 'public');  // Stocke la photo dans le dossier 'photos' du disque 'public'
+        }
         
         $user = User::create([
             'prenom' => $request->prenom,
@@ -148,6 +269,7 @@ class electionController extends Controller
             'niveau' => $request->niveau,
             'email' => $request->email,
             'password' => $request->password,
+            'photo' => $photoPath,
             'is_active' => true,
         ]);
     

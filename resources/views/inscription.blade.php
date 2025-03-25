@@ -15,7 +15,7 @@
         <div class="login-form">
             <div class="form-card">
                 <h2>Inscription</h2>
-                <form id="inscriptionForm" action="{{ route('inscription.submit') }}" method="POST">
+                <form id="inscriptionForm" action="{{ route('inscription.submit') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                     <div class="form-row">
                         <div class="form-group">
@@ -88,6 +88,13 @@
                         </select>
                         <div class="error-message"></div>
                     </div>
+
+                    <div class="form-group">
+                        <label for="photo">Photo</label>
+                        <input type="file" id="photo" name="photo" accept="image/*">
+                        <div class="error-message"></div>
+                    </div>
+
 
                     <button type="submit">S'inscrire</button>
                     
