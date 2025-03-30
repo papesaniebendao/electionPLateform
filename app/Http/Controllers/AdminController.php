@@ -13,6 +13,7 @@ use App\Models\Lists; // Modèle pour les listes
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
+
 class AdminController extends Controller
 {
     // Afficher la page d'accueil admin avec des données dynamiques
@@ -178,23 +179,34 @@ class AdminController extends Controller
      * Gérer la connexion de l'admin.
      */
     public function login(Request $request)
-{
-    $request->validate([
-        'email' => 'required|email',
-        'password' => 'required'
-    ]);
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required'
+        ]);
 
-    $credentials = $request->only('email', 'password');
+        $credentials = $request->only('email', 'password');
 
-    if (Auth::guard('admin')->attempt($credentials)) {
-        $request->session()->regenerate();
-        return redirect()->intended(route('pageAcceuilAdmin'));
+        if (Auth::guard('admin')->attempt($credentials)) {
+            $request->session()->regenerate();
+            return redirect()->intended(route('pageAcceuilAdmin'));
+        }
+
+        return back()->withErrors([
+            'email' => 'Identifiants incorrects.',
+        ])->onlyInput('email');
     }
 
-    return back()->withErrors([
-        'email' => 'Identifiants incorrects.',
-    ])->onlyInput('email');
-}
+    public function logout(Request $request)
+    {
+        Auth::guard('admin')->logout(); // Déconnexion de l'admin
+
+        $request->session()->invalidate(); // Invalide la session
+        $request->session()->regenerateToken(); // Régénère le token CSRF pour éviter les attaques
+
+        return redirect('/pageAuthAdmin'); // Redirige vers la page de connexion de l'admin
+    }
+
 
     // ====================================================
     // Gestion des listes

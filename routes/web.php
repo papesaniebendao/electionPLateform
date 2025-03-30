@@ -59,6 +59,8 @@ Route::middleware(['admin'])->group(function () {
     Route::get('/votes/statistiques', [AdminController::class, 'getVotingStatistics'])->name('votes.statistiques');
 });
 
+Route::get('/deconnexion1', [AdminController::class, 'logout']) -> name('deconnexionadmin.submit');
+
 
 //acceuil des differents utilisateur
 Route::middleware([EmpêcheConnexion::class])->group(function () {

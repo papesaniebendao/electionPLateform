@@ -63,44 +63,7 @@ class electionController extends Controller
         return response()->view('partials.candidates', compact('candidats'));
     }
 
-    /*
-    public function enregistrerVote(Request $request)
-    {
-        $user = Auth::user(); // Récupère l'utilisateur connecté
-        $candidat_id = $request->input('candidat_id'); // Récupère l'ID du candidat
 
-        // Vérifie si l'utilisateur a déjà voté
-        $existingVote = Vote::where('user_id', $user->id)->first();
-
-        if ($existingVote) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Vous avez déjà voté.'
-            ]);
-        }
-
-        // Enregistre le vote dans la table `votes`
-        Vote::create([
-            'user_id' => $user->id,
-            'candidat_id' => $candidat_id,
-        ]);
-
-        // Met à jour le nombre de votes du candidat
-        $candidat = Candidat::find($candidat_id);
-        $candidat->votes_count = $candidat->votes_count + 1;
-        $candidat->save();
-
-        $user->is_voted = true;
-        $user->save();
-
-        // Redirige vers la page avec un message de succès
-        return response()->json([
-            'success' => true,
-            'message' => 'Votre vote a été enregistré avec succès !',
-            'votes_count' => $candidat->votes_count // Retourne le nombre de votes mis à jour
-        ]);
-    }
-*/
 
     public function enregistrerVote(Request $request)
     {

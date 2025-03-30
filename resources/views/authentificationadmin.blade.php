@@ -14,7 +14,6 @@
         
         <div class="login-form">
             <div class="form-card">
-                <h1>Espace Administrateur</h1>
                 <h2>Connexion</h2>
                 <form action="{{ route('authentificationadmin.submit') }}" method="POST">
                     @csrf

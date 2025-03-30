@@ -61,49 +61,49 @@
             <!-- Codes étudiants pour chaque poste -->
             <div class="mb-3">
                 <label for="code_etu_info_licence" class="form-label">Code étudiant (Info Licence)</label>
-                <input type="text" class="form-control" id="code_etu_info_licence" name="code_etu_info_licence" required>
+                <input type="text" class="form-control" id="code_etu_info_licence" name="code_etu_info_licence" pattern="P\s\d{2}\s\d{3,4}" placeholder="P 00 0000" required>
                 <div class="invalid-feedback" id="error-code_etu_info_licence"></div>
             </div>
 
             <div class="mb-3">
                 <label for="code_etu_info_master" class="form-label">Code étudiant (Info Master)</label>
-                <input type="text" class="form-control" id="code_etu_info_master" name="code_etu_info_master" required>
+                <input type="text" class="form-control" id="code_etu_info_master" name="code_etu_info_master" pattern="P\s\d{2}\s\d{3,4}" placeholder="P 00 0000" required>
                 <div class="invalid-feedback" id="error-code_etu_info_master"></div>
             </div>
 
             <div class="mb-3">
                 <label for="code_etu_math_licence" class="form-label">Code étudiant (Math Licence)</label>
-                <input type="text" class="form-control" id="code_etu_math_licence" name="code_etu_math_licence" required>
+                <input type="text" class="form-control" id="code_etu_math_licence" name="code_etu_math_licence" pattern="P\s\d{2}\s\d{3,4}" placeholder="P 00 0000" required>
                 <div class="invalid-feedback" id="error-code_etu_math_licence"></div>
             </div>
 
             <div class="mb-3">
                 <label for="code_etu_math_master" class="form-label">Code étudiant (Math Master)</label>
-                <input type="text" class="form-control" id="code_etu_math_master" name="code_etu_math_master" required>
+                <input type="text" class="form-control" id="code_etu_math_master" name="code_etu_math_master" pattern="P\s\d{2}\s\d{3,4}" placeholder="P 00 0000" required>
                 <div class="invalid-feedback" id="error-code_etu_math_master"></div>
             </div>
 
             <div class="mb-3">
                 <label for="code_etu_phys_licence" class="form-label">Code étudiant (Phys Licence)</label>
-                <input type="text" class="form-control" id="code_etu_phys_licence" name="code_etu_phys_licence" required>
+                <input type="text" class="form-control" id="code_etu_phys_licence" name="code_etu_phys_licence" pattern="P\s\d{2}\s\d{3,4}" placeholder="P 00 0000" required>
                 <div class="invalid-feedback" id="error-code_etu_phys_licence"></div>
             </div>
 
             <div class="mb-3">
                 <label for="code_etu_phys_master" class="form-label">Code étudiant (Phys Master)</label>
-                <input type="text" class="form-control" id="code_etu_phys_master" name="code_etu_phys_master" required>
+                <input type="text" class="form-control" id="code_etu_phys_master" name="code_etu_phys_master" pattern="P\s\d{2}\s\d{3,4}" placeholder="P 00 0000" required>
                 <div class="invalid-feedback" id="error-code_etu_phys_master"></div>
             </div>
 
             <div class="mb-3">
                 <label for="code_etu_conseil_licence" class="form-label">Code étudiant (Conseil Licence)</label>
-                <input type="text" class="form-control" id="code_etu_conseil_licence" name="code_etu_conseil_licence" required>
+                <input type="text" class="form-control" id="code_etu_conseil_licence" name="code_etu_conseil_licence" pattern="P\s\d{2}\s\d{3,4}" placeholder="P 00 0000" required>
                 <div class="invalid-feedback" id="error-code_etu_conseil_licence"></div>
             </div>
 
             <div class="mb-3">
                 <label for="code_etu_conseil_master" class="form-label">Code étudiant (Conseil Master)</label>
-                <input type="text" class="form-control" id="code_etu_conseil_master" name="code_etu_conseil_master" required>
+                <input type="text" class="form-control" id="code_etu_conseil_master" name="code_etu_conseil_master" pattern="P\s\d{2}\s\d{3,4}" placeholder="P 00 0000" required>
                 <div class="invalid-feedback" id="error-code_etu_conseil_master"></div>
             </div>
 

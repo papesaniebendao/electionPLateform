@@ -56,10 +56,10 @@
                         </li>
 
                         <!-- Paramètres -->
-                        <li class="{{ request()->is('admin/parametres') ? 'active' : '' }}">
-                            <a href="/admin/parametres">
-                                <img src="{{ asset('assets/icons8-paramètres-24.png') }}" alt="Settings">
-                                <span>Paramètres</span>
+                        <li>
+                            <a href="{{ route('deconnexionadmin.submit') }}">
+                                <img src="assets/icons8-sortie-48.png" alt="Settings">
+                                <span>Se deconnecter</span> 
                             </a>
                         </li>
                     </ul>

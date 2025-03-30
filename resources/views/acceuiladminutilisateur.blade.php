@@ -52,9 +52,9 @@
                             </a>
                         </li>
                         <li>
-                            <a href="#">
-                                <img src="assets/icons8-paramètres-24.png" alt="Settings">
-                                <span>Paramètres Généraux</span>
+                            <a href="{{ route('deconnexionadmin.submit') }}">
+                                <img src="assets/icons8-sortie-48.png" alt="Settings">
+                                <span>Se deconnecter</span> 
                             </a>
                         </li>
                     </ul>

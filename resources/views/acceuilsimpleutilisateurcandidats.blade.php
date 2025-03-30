@@ -104,7 +104,7 @@
     <!-- Fenêtre modale -->
     <!-- Bannière flottante -->
     <div id="floatingBanner" class="floating-banner">
-        <p class="message">"Vous pouvez voter une seule fois par poste de candidat, donc au total, vous aurez 8 votes pour les 8 postes disponibles.</p>
+        <p class="message">"Vous pouvez voter une seule fois par poste de candidat, donc au total, vous aurez 8 votes à faire pour les 8 postes disponibles.</p>
         <button class="close">&times;</button>
     </div>
 

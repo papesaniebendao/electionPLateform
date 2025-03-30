@@ -37,11 +37,11 @@
 
     <section class="hero-section container d-flex flex-column flex-lg-row"> 
         <div class="hero-text text-center text-lg-start">
-            <span style = "background: #345afb;" class="badge  mb-3">Votez pour votre choix</span>
+            <span style = "background: #3f51b5;" class="badge  mb-3">Votez pour votre choix</span>
             <h1>Bienvenue, {{ Auth::user()->prenom }} {{ Auth::user()->nom }} !</h1>
             <p>Votre opinion compte ! Prenez part à ce vote et contribuez à façonner l'avenir.</p>
             <p>Vous pouvez aussi suivre les resultats du votes.</p>
-            <a href = "{{ route('pageAcceuilSimpleCandidats')}}" style = "background: #345afb; color: white;" class="btn" >Voter maintenant</a>
+            <a href = "{{ route('pageAcceuilSimpleCandidats')}}" style = "background: #3f51b5; color: white;" class="btn" >Voter maintenant</a>
         </div>
         <div class="hero-image mt-4 mt-lg-0">
             <img src="{{ asset('assets/acceuil.jpg') }}" alt="Illustration élections">
