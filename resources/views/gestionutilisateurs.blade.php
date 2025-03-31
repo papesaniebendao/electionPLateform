@@ -108,7 +108,7 @@
                         </div>
                         <!-- Bulle de l'admin -->
                         <div class="admin-bubble">
-                            <span class="admin-name">May</span>
+                            <span class="admin-name">Admin</span>
                         </div>
                     </div>
                 </div>
