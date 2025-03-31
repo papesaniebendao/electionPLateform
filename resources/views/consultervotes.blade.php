@@ -79,7 +79,7 @@
                             <h5 class="mb-0">Consulter les votes</h5>
                         </div>
                         <div class="admin-bubble">
-                            <span class="admin-name">{{ Auth::guard('admin')->user()->name }}</span>
+                            <span class="admin-name">Admin</span>
                         </div>
                     </div>
                 </div>
