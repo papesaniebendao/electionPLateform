@@ -72,7 +72,7 @@
                         <!-- Bulle de l'admin -->
                         <div class="col-6 text-end">
                             <div class="admin-bubble">
-                                <span class="admin-name">May</span>
+                                <span class="admin-name">Admin</span>
                             </div>
                         </div>
                     </nav>
