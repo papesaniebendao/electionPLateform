@@ -134,7 +134,7 @@
                         <table class="my-table">
                             <thead>
                                 <tr>
-                                    <th>Photo</th>
+                                    <th></th>
                                     <th>Nom</th>
                                     <th>Mail</th>
                                     <th>Departement</th>
