@@ -58,7 +58,7 @@
                         <!-- Paramètres -->
                         <li>
                             <a href="{{ route('deconnexionadmin.submit') }}">
-                                <img src="assets/icons8-sortie-48.png" alt="Settings">
+                                <img src="assets/icons8-sortie-48.png" alt="deconnexion">
                                 <span>Se deconnecter</span> 
                             </a>
                         </li>
