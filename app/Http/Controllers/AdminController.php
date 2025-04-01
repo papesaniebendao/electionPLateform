@@ -429,217 +429,262 @@ class AdminController extends Controller
 
         return redirect()->route('gestion.listes')->with('success', 'Liste supprimée avec succès !');
     }
+//=======================================================
+// MODULE 5: CONSULTATION DES VOTES ET STATISTIQUES
+//=======================================================
 
-    //=======================================================
-    // MODULE 5: CONSULTATION DES VOTES ET STATISTIQUES
-    //=======================================================
+/**
+ * Afficher la page de consultation des votes avec filtres.
+ */
+public function consulterVotes(Request $request)
+{
+    // Définir des options par défaut avec "all" inclus
+    $departements = ['all', 'Informatique', 'Mathematique', 'Physique'];
+    $niveaux = ['all', 'Licence', 'Master'];
+
+    $vue = $request->input('vue', 'departement');
     
-    /**
-     * Afficher la page de consultation des votes avec filtres.
-     */
-    public function consulterVotes(Request $request)
-    {
-        // Définir des options par défaut avec "all" inclus
-        $departements = ['all', 'Informatique', 'Mathematique', 'Physique'];
-        $niveaux = ['all', 'Licence', 'Master'];
-
-        $vue = $request->input('vue', 'departement');
-        
-        // Initialiser les variables
-        $votes_departement = [];
-        $votes_conseil = [];
-        $stats = null;
-        
-        // Récupération des données selon la vue sélectionnée
-        switch($vue) {
-            case 'departement':
-                $votes_departement = $this->getVotesDepartement([
-                    'departement' => $request->input('departement', 'all'),
-                    'niveau' => $request->input('niveau', 'all')
-                ]);
-                break;
-                
-            case 'conseil':
-                $votes_conseil = $this->getVotesConseil([
-                    'niveau' => $request->input('niveau', 'all')
-                ]);
-                break;
-                
-            case 'statistiques':
-                $stats = $this->getVotesStatistics();
-                break;
-        }
-        
-        return view('consultervotes', [
-            'vue_active' => $vue,
-            'filters' => [
+    // Initialiser les variables
+    $votes_departement = [];
+    $votes_conseil = [];
+    $stats = null;
+    
+    // Récupération des données selon la vue sélectionnée
+    switch($vue) {
+        case 'departement':
+            $votes_departement = $this->getVotesDepartement([
                 'departement' => $request->input('departement', 'all'),
                 'niveau' => $request->input('niveau', 'all')
-            ],
-            'departements' => $departements,
-            'niveaux' => $niveaux,
-            'votes_departement' => $votes_departement,
-            'votes_conseil' => $votes_conseil,
-            'stats' => $stats
-        ]);
-    }
-
-    /**
-     * Récupérer les votes par département avec filtres
-     */
-    protected function getVotesDepartement(array $filters)
-    {
-        $query = Candidat::with(['user', 'list'])
-            ->where('type_candidat', 'departement')
-            ->has('list')
-            ->withCount('votes');
-
-        // Appliquer les filtres de département et niveau
-        if ($filters['departement'] !== 'all') {
-            $query->whereHas('user', fn($q) => $q->where('departement', $filters['departement']));
-        }
-
-        if ($filters['niveau'] !== 'all') {
-            $query->whereHas('user', fn($q) => $q->where('niveau', $filters['niveau']));
-        }
-
-        // Calcul du total des votes APRÈS filtrage
-        $totalVotes = clone $query;
-        $totalVotes = $totalVotes->get()->sum('votes_count');
-
-        $candidats = $query->get();
-
-        return $candidats->map(function($candidat) use ($totalVotes) {
-            return [
-                'liste' => $candidat->list->nom_liste ?? 'Liste non spécifiée',
-                'candidat' => ($candidat->user->prenom ?? '') . ' ' . ($candidat->user->nom ?? ''),
-                'departement' => $candidat->user->departement ?? null,
-                'niveau' => $candidat->user->niveau ?? null,
-                'votes' => $candidat->votes_count,
-                'pourcentage' => $totalVotes > 0 ? round(($candidat->votes_count / $totalVotes) * 100, 2) : 0,
-            ];
-        })->toArray();
-    }
-
-    /**
-     * Récupérer les votes pour le conseil avec filtres
-     */
-    protected function getVotesConseil(array $filters)
-    {
-        $query = Candidat::with(['user', 'list'])
-            ->where('type_candidat', 'conseil')
-            ->has('user')
-            ->has('list')
-            ->withCount('votes');
-
-        if ($filters['niveau'] !== 'all') {
-            $query->whereHas('user', function($q) use ($filters) {
-                $q->where('niveau', $filters['niveau']);
-            });
-        }
-
-        // Calcul du total des votes APRÈS filtrage
-        $totalVotes = clone $query;
-        $totalVotes = $totalVotes->get()->sum('votes_count');
-
-        $candidats = $query->get();
-
-        return $candidats->map(function($candidat) use ($totalVotes) {
-            return [
-                'liste' => $candidat->list->nom_liste ?? 'Liste inconnue',
-                'candidat' => ($candidat->user->prenom ?? '') . ' ' . ($candidat->user->nom ?? ''),
-                'niveau' => $candidat->user->niveau ?? 'Niveau inconnu',
-                'votes' => $candidat->votes_count,
-                'pourcentage' => $totalVotes > 0 ? round(($candidat->votes_count / $totalVotes) * 100, 2) : 0,
-            ];
-        })->toArray();
-    }
-
-    /**
-     * Récupérer les statistiques globales
-     */
-    protected function getVotesStatistics()
-    {
-        set_time_limit(120);
-        Log::info('Début du calcul des statistiques');
-
-        try {
-            // Participation globale
-            $totalEtudiants = User::count();
-            $totalVotants = Vote::select('user_id')->distinct()->count();
-
-            // Stats par département avec requête optimisée
-            $departementStats = DB::table('users')
-                ->leftJoin('votes', 'users.id', '=', 'votes.user_id')
-                ->select('departement')
-                ->selectRaw('COUNT(DISTINCT votes.user_id) as count')
-                ->groupBy('departement')
-                ->get()
-                ->mapWithKeys(function($item) use ($totalVotants) {
-                    return [
-                        $item->departement => [
-                            'count' => $item->count,
-                            'percentage' => $totalVotants > 0 ? round(($item->count / $totalVotants) * 100, 2) : 0
-                        ]
-                    ];
-                });
-
-            // Stats par niveau avec requête optimisée
-            $niveauStats = DB::table('users')
-                ->leftJoin('votes', 'users.id', '=', 'votes.user_id')
-                ->select('niveau')
-                ->selectRaw('COUNT(DISTINCT votes.user_id) as count')
-                ->groupBy('niveau')
-                ->get()
-                ->mapWithKeys(function($item) use ($totalVotants) {
-                    return [
-                        $item->niveau => [
-                            'count' => $item->count,
-                            'percentage' => $totalVotants > 0 ? round(($item->count / $totalVotants) * 100, 2) : 0
-                        ]
-                    ];
-                });
-
-            // Performance des listes avec requête optimisée
-            $listesStats = DB::table('lists')
-                ->leftJoin('candidats', 'lists.id', '=', 'candidats.list_id')
-                ->select('lists.nom_liste')
-                ->selectRaw('COALESCE(SUM(candidats.votes_count), 0) as total_votes')
-                ->groupBy('lists.nom_liste')
-                ->get()
-                ->map(function($liste) {
-                    return [
-                        'liste' => $liste->nom_liste,
-                        'votes' => (int)$liste->total_votes
-                    ];
-                });
-
-            return [
-                'participation' => [
-                    'percentage' => $totalEtudiants > 0 ? round(($totalVotants / $totalEtudiants) * 100, 2) : 0,
-                    'text' => $totalEtudiants > 0 
-                        ? round(($totalVotants / $totalEtudiants) * 100, 2).'% ('.$totalVotants.'/'.$totalEtudiants.')' 
-                        : '0% (0/0)'
-                ],
-                'departements' => $departementStats,
-                'niveaux' => $niveauStats,
-                'listes' => $listesStats
-            ];
-
-        } catch (\Exception $e) {
-            Log::error('ERREUR STATISTIQUES: ', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
             ]);
+            break;
             
-            return [
-                'error' => 'Une erreur est survenue lors du calcul des statistiques',
-                'details' => config('app.debug') ? $e->getMessage() : null
+        case 'conseil':
+            $votes_conseil = $this->getVotesConseil([
+                'niveau' => $request->input('niveau', 'all')
+            ]);
+            break;
+            
+        case 'statistiques':
+            $stats = $this->getVotesStatistics($request);
+            break;
+    }
+    
+    return view('consultervotes', [
+        'vue_active' => $vue,
+        'filters' => [
+            'departement' => $request->input('departement', 'all'),
+            'niveau' => $request->input('niveau', 'all')
+        ],
+        'departements' => $departements,
+        'niveaux' => $niveaux,
+        'votes_departement' => $votes_departement,
+        'votes_conseil' => $votes_conseil,
+        'stats' => $stats
+    ]);
+}
+
+/**
+ * Récupérer les votes par département avec filtres
+ */
+protected function getVotesDepartement(array $filters)
+{
+    $query = Candidat::with(['user', 'list'])
+        ->where('type_candidat', 'departement')
+        ->has('list')
+        ->has('user')  // S'assurer que l'utilisateur existe
+        ->withCount('votes');
+
+    // Appliquer les filtres de département et niveau
+    if ($filters['departement'] !== 'all') {
+        $query->whereHas('user', fn($q) => $q->where('departement', $filters['departement']));
+    }
+
+    if ($filters['niveau'] !== 'all') {
+        $query->whereHas('user', fn($q) => $q->where('niveau', $filters['niveau']));
+    }
+
+    $candidats = $query->get();
+    
+    // Calcul du total des votes APRÈS filtrage pour le pourcentage
+    $totalVotes = $candidats->sum('votes_count');
+
+    return $candidats->map(function($candidat) use ($totalVotes) {
+        return [
+            'liste' => $candidat->list->nom_liste ?? 'Liste non spécifiée',
+            'candidat' => ($candidat->user->prenom ?? '') . ' ' . ($candidat->user->nom ?? ''),
+            'departement' => $candidat->user->departement ?? 'N/A',
+            'niveau' => $candidat->user->niveau ?? 'N/A',
+            'votes' => $candidat->votes_count,
+            'pourcentage' => $totalVotes > 0 ? round(($candidat->votes_count / $totalVotes) * 100, 2) : 0,
+        ];
+    })->toArray();
+}
+
+/**
+ * Récupérer les votes pour le conseil avec filtres
+ */
+protected function getVotesConseil(array $filters)
+{
+    $query = Candidat::with(['user', 'list'])
+        ->where('type_candidat', 'conseil')
+        ->has('user')
+        ->has('list')
+        ->withCount('votes');
+
+    if ($filters['niveau'] !== 'all') {
+        $query->whereHas('user', function($q) use ($filters) {
+            $q->where('niveau', $filters['niveau']);
+        });
+    }
+
+    $candidats = $query->get();
+    
+    // Calcul du total des votes APRÈS filtrage pour le pourcentage
+    $totalVotes = $candidats->sum('votes_count');
+
+    return $candidats->map(function($candidat) use ($totalVotes) {
+        return [
+            'liste' => $candidat->list->nom_liste ?? 'Liste inconnue',
+            'candidat' => ($candidat->user->prenom ?? '') . ' ' . ($candidat->user->nom ?? ''),
+            'niveau' => $candidat->user->niveau ?? 'N/A',
+            'votes' => $candidat->votes_count,
+            'pourcentage' => $totalVotes > 0 ? round(($candidat->votes_count / $totalVotes) * 100, 2) : 0,
+        ];
+    })->toArray();
+}
+
+/**
+ * Récupérer les statistiques globales
+ */
+        protected function getVotesStatistics(Request $request)
+        {
+            $vue_active = $request->get('vue', 'departement');
+            $filters = [
+                'departement' => $request->get('departement', 'all'),
+                'niveau' => $request->get('niveau', 'all'),
             ];
+            
+            // Récupérer les options pour les filtres
+            $departements = User::distinct('departement')->pluck('departement')->toArray();
+            $niveaux = User::distinct('niveau')->pluck('niveau')->toArray();
+            array_unshift($departements, 'all');
+            array_unshift($niveaux, 'all');
+            
+            // Initialiser les variables
+            $votes_departement = [];
+            $votes_conseil = [];
+            
+            // Récupérer les données selon la vue active
+            if ($vue_active === 'departement') {
+                $votes_departement = $this->getVotesDepartement($filters);
+            } elseif ($vue_active === 'conseil') {
+                $votes_conseil = $this->getVotesConseil($filters);
+            }
+            
+            return view('consulter-votes', compact(
+                'vue_active', 
+                'filters', 
+                'departements', 
+                'niveaux', 
+                'votes_departement', 
+                'votes_conseil'
+            ));
+        }
+        
+        public function getVotingStatistics()
+        {
+            try {
+                $stats = $this->calculateVotesStatistics();
+                return response()->json($stats);
+            } catch (\Exception $e) {
+                Log::error('Erreur statistiques API: ' . $e->getMessage(), [
+                    'trace' => $e->getTraceAsString()
+                ]);
+                
+                return response()->json([
+                    'error' => 'Une erreur est survenue lors du calcul des statistiques',
+                    'details' => config('app.debug') ? $e->getMessage() : null
+                ], 500);
+            }
+        }
+        protected function calculateVotesStatistics()
+        {
+            try {
+    
+                $total_users = User::where('is_active', true)->count();
+                
+                // Récupérer le nombre total de votes
+                $total_votes = Vote::count();
+                
+                // Calculer la participation globale
+                $participation_percentage = $total_users > 0 ? round(($total_votes / ($total_users*8)) * 100, 2) : 0;
+                
+                // Statistiques par département
+                $departements = [];
+                $depts = User::distinct('departement')->pluck('departement');
+                foreach ($depts as $dept) {
+                    $users_in_dept = User::where('departement', $dept)->where('is_active', true)->count();
+                    $votes_in_dept = Vote::whereHas('user', function($query) use ($dept) {
+                        $query->where('departement', $dept);
+                    })->count();
+                    
+                    $dept_percentage = $users_in_dept > 0 ? round(($votes_in_dept / $users_in_dept) * 100, 2) : 0;
+                    
+                    $departements[$dept] = [
+                        'total' => $users_in_dept,
+                        'votes' => $votes_in_dept,
+                        'percentage' => $dept_percentage
+                    ];
+                }
+                
+                // Statistiques par niveau
+                $niveaux = [];
+                $levels = User::distinct('niveau')->pluck('niveau');
+                foreach ($levels as $level) {
+                    $users_in_level = User::where('niveau', $level)->where('is_active', true)->count();
+                    $votes_in_level = Vote::whereHas('user', function($query) use ($level) {
+                        $query->where('niveau', $level);
+                    })->count();
+                    
+                    $level_percentage = $users_in_level > 0 ? round(($votes_in_level / $users_in_level) * 100, 2) : 0;
+                    
+                    $niveaux[$level] = [
+                        'total' => $users_in_level,
+                        'votes' => $votes_in_level,
+                        'percentage' => $level_percentage
+                    ];
+                }
+                
+                // Performance des listes
+                $listes = DB::table('votes')
+                    ->join('candidats', 'votes.candidat_id', '=', 'candidats.id')
+                    ->join('lists', 'candidats.list_id', '=', 'lists.id')
+                    ->select('lists.nom_liste as liste', DB::raw('count(*) as votes'))
+                    ->groupBy('lists.nom_liste')
+                    ->orderBy('votes', 'desc')
+                    ->get()
+                    ->toArray();
+                
+                return [
+                    'participation' => [
+                        'total_users' => $total_users,
+                        'total_votes' => $total_votes,
+                        'percentage' => $participation_percentage,
+                        'text' => "$participation_percentage% ($total_votes/$total_users)"
+                    ],
+                    'departements' => $departements,
+                    'niveaux' => $niveaux,
+                    'listes' => $listes
+                ];
+            } catch (\Exception $e) {
+                Log::error('Erreur calcul statistiques: ' . $e->getMessage(), [
+                    'trace' => $e->getTraceAsString()
+                ]);
+                
+                return [
+                    'error' => 'Une erreur est survenue lors du calcul des statistiques',
+                    'details' => config('app.debug') ? $e->getMessage() : null
+                ];
+            }
         }
     }
-<<<<<<< HEAD
-}
-=======
-}
->>>>>>> 1db560c (projet Plateforme-Election)
