@@ -79,10 +79,6 @@ class AdminController extends Controller
         return $activities->sortByDesc('date')->take(10);
     }
 
-    // ==============================================
-    // VERSIONS ORIGINALES POUR LES AUTRES MÉTHODES
-    // ==============================================
-
     /**
      * Afficher la page de gestion des utilisateurs.
      */
