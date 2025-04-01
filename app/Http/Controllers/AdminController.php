@@ -5,19 +5,71 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use App\Models\Admin;
-use App\Models\User; // Modèle pour les étudiants
-use App\Models\Candidat; // Modèle pour les candidats
-use App\Models\Vote; // Modèle pour les votes
-use App\Models\Lists; // Modèle pour les listes
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
-
+use Illuminate\Support\Facades\DB;
+use App\Models\Admin;
+use App\Models\User;
+use App\Models\Candidat;
+use App\Models\Vote;
+use App\Models\Lists;
 
 class AdminController extends Controller
 {
-    // Afficher la page d'accueil admin avec des données dynamiques
- public function afficherPageAcceuilAdmin()
+    //=======================================================
+    // MODULE 1: AUTHENTIFICATION ADMIN
+    //=======================================================
+    
+    /**
+     * Afficher la page d'authentification admin.
+     */
+    public function afficherPageAuthAdmin()
+    {
+        return view('authentificationadmin');
+    }
+
+    /**
+     * Gérer la connexion de l'admin.
+     */
+    public function login(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required'
+        ]);
+
+        $credentials = $request->only('email', 'password');
+
+        if (Auth::guard('admin')->attempt($credentials)) {
+            $request->session()->regenerate();
+            return redirect()->intended(route('pageAcceuilAdmin'));
+        }
+
+        return back()->withErrors([
+            'email' => 'Identifiants incorrects.',
+        ])->onlyInput('email');
+    }
+
+    /**
+     * Déconnecter l'admin.
+     */
+    public function logout(Request $request)
+    {
+        Auth::guard('admin')->logout(); // Déconnexion de l'admin
+        $request->session()->invalidate(); // Invalide la session
+        $request->session()->regenerateToken(); // Régénère le token CSRF pour éviter les attaques
+
+        return redirect('/pageAuthAdmin'); // Redirige vers la page de connexion de l'admin
+    }
+
+    //=======================================================
+    // MODULE 2: TABLEAU DE BORD ADMIN
+    //=======================================================
+    
+    /**
+     * Afficher la page d'accueil admin avec des données dynamiques
+     */
+    public function afficherPageAcceuilAdmin()
     {
         try {
             // Récupérer les statistiques de base
@@ -41,6 +93,9 @@ class AdminController extends Controller
         }
     }
 
+    /**
+     * Récupérer les activités récentes pour le tableau de bord
+     */
     private function getRecentActivities()
     {
         $activities = collect();
@@ -79,6 +134,10 @@ class AdminController extends Controller
         return $activities->sortByDesc('date')->take(10);
     }
 
+    //=======================================================
+    // MODULE 3: GESTION DES UTILISATEURS
+    //=======================================================
+    
     /**
      * Afficher la page de gestion des utilisateurs.
      */
@@ -163,51 +222,10 @@ class AdminController extends Controller
         ]);
     }
 
-    /**
-     * Afficher la page d'authentification admin.
-     */
-    public function afficherPageAuthAdmin()
-    {
-        return view('authentificationadmin');
-    }
-
-    /**
-     * Gérer la connexion de l'admin.
-     */
-    public function login(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required'
-        ]);
-
-        $credentials = $request->only('email', 'password');
-
-        if (Auth::guard('admin')->attempt($credentials)) {
-            $request->session()->regenerate();
-            return redirect()->intended(route('pageAcceuilAdmin'));
-        }
-
-        return back()->withErrors([
-            'email' => 'Identifiants incorrects.',
-        ])->onlyInput('email');
-    }
-
-    public function logout(Request $request)
-    {
-        Auth::guard('admin')->logout(); // Déconnexion de l'admin
-
-        $request->session()->invalidate(); // Invalide la session
-        $request->session()->regenerateToken(); // Régénère le token CSRF pour éviter les attaques
-
-        return redirect('/pageAuthAdmin'); // Redirige vers la page de connexion de l'admin
-    }
-
-
-    // ====================================================
-    // Gestion des listes
-    // ====================================================
-
+    //=======================================================
+    // MODULE 4: GESTION DES LISTES
+    //=======================================================
+    
     /**
      * Afficher la page de gestion des listes.
      */
@@ -220,164 +238,163 @@ class AdminController extends Controller
     /**
      * Afficher le formulaire de création d'une liste.
      */
-        public function createListe()
-        {
-            return view('lists.create');
-        }
+    public function createListe()
+    {
+        return view('lists.create');
+    }
 
     /**
      * Enregistrer une nouvelle liste.
      */
     public function storeListe(Request $request)
-{
-    Log::info('Début de la fonction storeListe'); // Ajoutez ceci pour déboguer
+    {
+        Log::info('Début de la fonction storeListe');
 
-    // Valider les données reçues
-    $validator = Validator::make($request->all(), [
-        'nom_liste' => 'required|string|max:255',
-        'description' => 'required|string',
-        'is_active' => 'required|boolean',
-        'code_etu_info_licence' => 'required|string|max:255',
-        'code_etu_info_master' => 'required|string|max:255',
-        'code_etu_math_licence' => 'required|string|max:255',
-        'code_etu_math_master' => 'required|string|max:255',
-        'code_etu_phys_licence' => 'required|string|max:255',
-        'code_etu_phys_master' => 'required|string|max:255',
-        'code_etu_conseil_licence' => 'required|string|max:255',
-        'code_etu_conseil_master' => 'required|string|max:255',
-    ]);
+        // Valider les données reçues
+        $validator = Validator::make($request->all(), [
+            'nom_liste' => 'required|string|max:255',
+            'description' => 'required|string',
+            'is_active' => 'required|boolean',
+            'code_etu_info_licence' => 'required|string|max:255',
+            'code_etu_info_master' => 'required|string|max:255',
+            'code_etu_math_licence' => 'required|string|max:255',
+            'code_etu_math_master' => 'required|string|max:255',
+            'code_etu_phys_licence' => 'required|string|max:255',
+            'code_etu_phys_master' => 'required|string|max:255',
+            'code_etu_conseil_licence' => 'required|string|max:255',
+            'code_etu_conseil_master' => 'required|string|max:255',
+        ]);
 
-    Log::info('Validation terminée'); // Ajoutez ceci pour déboguer
+        // Si la validation échoue, renvoyer les erreurs en JSON
+        if ($validator->fails()) {
+            Log::info('Validation échouée', $validator->errors()->toArray());
+            return response()->json([
+                'errors' => $validator->errors(),
+            ], 422);
+        }
 
-    // Si la validation échoue, renvoyer les erreurs en JSON
-    if ($validator->fails()) {
-        Log::info('Validation échouée', $validator->errors()->toArray()); // Ajoutez ceci pour déboguer
-        return response()->json([
-            'errors' => $validator->errors(),
-        ], 422); // Code HTTP 422 pour les erreurs de validation
-    }
+        // Récupérer tous les codes étudiants pour les postes de département
+        $codesDepartement = [
+            $request->code_etu_info_licence,
+            $request->code_etu_info_master,
+            $request->code_etu_math_licence,
+            $request->code_etu_math_master,
+            $request->code_etu_phys_licence,
+            $request->code_etu_phys_master,
+        ];
 
-    // Récupérer tous les codes étudiants pour les postes de département
-    $codesDepartement = [
-        $request->code_etu_info_licence,
-        $request->code_etu_info_master,
-        $request->code_etu_math_licence,
-        $request->code_etu_math_master,
-        $request->code_etu_phys_licence,
-        $request->code_etu_phys_master,
-    ];
-
-    Log::info('Codes département récupérés', $codesDepartement); // Ajoutez ceci pour déboguer
-
-    // Vérifier si un candidat de conseil est déjà dans un département
-    if (in_array($request->code_etu_conseil_licence, $codesDepartement)) {
-        Log::info('Candidat déjà dans un département (Conseil Licence)'); // Ajoutez ceci pour déboguer
-        return response()->json([
-            'errors' => [
-                'code_etu_conseil_licence' => ['Ce candidat est déjà assigné à un poste de département.']
-            ],
-        ], 422);
-    }
-
-    if (in_array($request->code_etu_conseil_master, $codesDepartement)) {
-        Log::info('Candidat déjà dans un département (Conseil Master)'); // Ajoutez ceci pour déboguer
-        return response()->json([
-            'errors' => [
-                'code_etu_conseil_master' => ['Ce candidat est déjà assigné à un poste de département.']
-            ],
-        ], 422);
-    }
-
-    // Vérifier que chaque code étudiant existe, est actif, et correspond au bon département et niveau
-    $codesEtudiants = [
-        'info_licence' => [
-            'code' => $request->code_etu_info_licence,
-            'departement' => 'Informatique',
-            'niveau' => 'Licence',
-        ],
-        'info_master' => [
-            'code' => $request->code_etu_info_master,
-            'departement' => 'Informatique',
-            'niveau' => 'Master',
-        ],
-        'math_licence' => [
-            'code' => $request->code_etu_math_licence,
-            'departement' => 'Mathematique',
-            'niveau' => 'Licence',
-        ],
-        'math_master' => [
-            'code' => $request->code_etu_math_master,
-            'departement' => 'Mathematique',
-            'niveau' => 'Master',
-        ],
-        'phys_licence' => [
-            'code' => $request->code_etu_phys_licence,
-            'departement' => 'Physique',
-            'niveau' => 'Licence',
-        ],
-        'phys_master' => [
-            'code' => $request->code_etu_phys_master,
-            'departement' => 'Physique',
-            'niveau' => 'Master',
-        ],
-        'conseil_licence' => [
-            'code' => $request->code_etu_conseil_licence,
-            'departement' => null, // Conseil n'est pas lié à un département
-            'niveau' => 'Licence',
-        ],
-        'conseil_master' => [
-            'code' => $request->code_etu_conseil_master,
-            'departement' => null, // Conseil n'est pas lié à un département
-            'niveau' => 'Master',
-        ],
-    ];
-
-    foreach ($codesEtudiants as $type => $data) {
-        $etudiant = User::where('code_etudiant', $data['code'])
-                        ->where('is_active', true)
-                        ->when($data['departement'], function ($query, $departement) {
-                            return $query->where('departement', $departement);
-                        })
-                        ->where('niveau', $data['niveau'])
-                        ->first();
-
-        if (!$etudiant) {
-            $message = "Le code étudiant {$data['code']} ne correspond pas ";
-            $message .= $data['departement'] ? "au département {$data['departement']} ou " : "";
-            $message .= "au niveau {$data['niveau']} requis.";
-
-            Log::info('Code étudiant invalide', ['type' => $type, 'message' => $message]); // Ajoutez ceci pour déboguer
+        // Vérifier si un candidat de conseil est déjà dans un département
+        if (in_array($request->code_etu_conseil_licence, $codesDepartement)) {
+            Log::info('Candidat déjà dans un département (Conseil Licence)');
             return response()->json([
                 'errors' => [
-                    'code_etu_' . $type => [$message],
+                    'code_etu_conseil_licence' => ['Ce candidat est déjà assigné à un poste de département.']
                 ],
             ], 422);
         }
-    }
 
-    // Créer la liste
-    $list = Lists::create($request->all());
+        if (in_array($request->code_etu_conseil_master, $codesDepartement)) {
+            Log::info('Candidat déjà dans un département (Conseil Master)');
+            return response()->json([
+                'errors' => [
+                    'code_etu_conseil_master' => ['Ce candidat est déjà assigné à un poste de département.']
+                ],
+            ], 422);
+        }
 
-    // Remplir la table `candidats`
-    foreach ($codesEtudiants as $type => $data) {
-        Candidat::create([
-            'code_etudiant' => $data['code'],
-            'type_candidat' => str_contains($type, 'conseil') ? 'conseil' : 'departement',
-            'list_id' => $list->id,
-            'is_active' => true,
-            'votes_count' => 0,
+        // Définir les candidats avec leurs critères de validation
+        $codesEtudiants = [
+            'info_licence' => [
+                'code' => $request->code_etu_info_licence,
+                'departement' => 'Informatique',
+                'niveau' => 'Licence',
+            ],
+            'info_master' => [
+                'code' => $request->code_etu_info_master,
+                'departement' => 'Informatique',
+                'niveau' => 'Master',
+            ],
+            'math_licence' => [
+                'code' => $request->code_etu_math_licence,
+                'departement' => 'Mathematique',
+                'niveau' => 'Licence',
+            ],
+            'math_master' => [
+                'code' => $request->code_etu_math_master,
+                'departement' => 'Mathematique',
+                'niveau' => 'Master',
+            ],
+            'phys_licence' => [
+                'code' => $request->code_etu_phys_licence,
+                'departement' => 'Physique',
+                'niveau' => 'Licence',
+            ],
+            'phys_master' => [
+                'code' => $request->code_etu_phys_master,
+                'departement' => 'Physique',
+                'niveau' => 'Master',
+            ],
+            'conseil_licence' => [
+                'code' => $request->code_etu_conseil_licence,
+                'departement' => null, // Conseil n'est pas lié à un département
+                'niveau' => 'Licence',
+            ],
+            'conseil_master' => [
+                'code' => $request->code_etu_conseil_master,
+                'departement' => null, // Conseil n'est pas lié à un département
+                'niveau' => 'Master',
+            ],
+        ];
+
+        // Vérifier chaque candidat
+        foreach ($codesEtudiants as $type => $data) {
+            $etudiant = User::where('code_etudiant', $data['code'])
+                            ->where('is_active', true)
+                            ->when($data['departement'], function ($query, $departement) {
+                                return $query->where('departement', $departement);
+                            })
+                            ->where('niveau', $data['niveau'])
+                            ->first();
+
+            if (!$etudiant) {
+                $message = "Le code étudiant {$data['code']} ne correspond pas ";
+                $message .= $data['departement'] ? "au département {$data['departement']} ou " : "";
+                $message .= "au niveau {$data['niveau']} requis.";
+
+                Log::info('Code étudiant invalide', ['type' => $type, 'message' => $message]);
+                return response()->json([
+                    'errors' => [
+                        'code_etu_' . $type => [$message],
+                    ],
+                ], 422);
+            }
+        }
+
+        // Créer la liste
+        $list = Lists::create($request->all());
+
+        // Remplir la table `candidats`
+        foreach ($codesEtudiants as $type => $data) {
+            Candidat::create([
+                'code_etudiant' => $data['code'],
+                'type_candidat' => str_contains($type, 'conseil') ? 'conseil' : 'departement',
+                'list_id' => $list->id,
+                'is_active' => true,
+                'votes_count' => 0,
+            ]);
+        }
+
+        Log::info('Liste créée avec succès');
+
+        // Renvoyer une réponse JSON en cas de succès
+        return response()->json([
+            'success' => true,
+            'message' => 'Liste créée avec succès !',
         ]);
     }
 
-    Log::info('Liste créée avec succès'); // Ajoutez ceci pour déboguer
-
-    // Renvoyer une réponse JSON en cas de succès
-    return response()->json([
-        'success' => true,
-        'message' => 'Liste créée avec succès !',
-    ]);
-}
-    /* Afficher le formulaire de modification d'une liste.
+    /**
+     * Afficher le formulaire de modification d'une liste.
      */
     public function editListe($id)
     {
@@ -412,10 +429,14 @@ class AdminController extends Controller
 
         return redirect()->route('gestion.listes')->with('success', 'Liste supprimée avec succès !');
     }
-    //gestion liste
-    
 
+    //=======================================================
+    // MODULE 5: CONSULTATION DES VOTES ET STATISTIQUES
+    //=======================================================
     
+    /**
+     * Afficher la page de consultation des votes avec filtres.
+     */
     public function consulterVotes(Request $request)
     {
         // Définir des options par défaut avec "all" inclus
@@ -424,12 +445,12 @@ class AdminController extends Controller
 
         $vue = $request->input('vue', 'departement');
         
-        // Initialiser TOUTES les variables potentielles
+        // Initialiser les variables
         $votes_departement = [];
         $votes_conseil = [];
         $stats = null;
         
-        // Récupération des données
+        // Récupération des données selon la vue sélectionnée
         switch($vue) {
             case 'departement':
                 $votes_departement = $this->getVotesDepartement([
@@ -482,7 +503,7 @@ class AdminController extends Controller
             $query->whereHas('user', fn($q) => $q->where('niveau', $filters['niveau']));
         }
 
-        // Calcul du total des votes APRES filtrage
+        // Calcul du total des votes APRÈS filtrage
         $totalVotes = clone $query;
         $totalVotes = $totalVotes->get()->sum('votes_count');
 
@@ -517,7 +538,7 @@ class AdminController extends Controller
             });
         }
 
-        // Calcul du total des votes APRES filtrage
+        // Calcul du total des votes APRÈS filtrage
         $totalVotes = clone $query;
         $totalVotes = $totalVotes->get()->sum('votes_count');
 
@@ -617,7 +638,4 @@ class AdminController extends Controller
             ];
         }
     }
-
-
-        
 }
