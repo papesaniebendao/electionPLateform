@@ -638,4 +638,8 @@ class AdminController extends Controller
             ];
         }
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 1db560c (projet Plateforme-Election)
